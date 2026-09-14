@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10 Gilfillan St - INTERIOR DESIGN</title>
+  <style>
+    /* CSS Reset & Variables */
+    :root {
+      --color-primary: #8C3232;
+      --color-primary-rgb: 140, 50, 50;
+      --color-primary-dark: #6E2626;
+      --color-dark: #1E1E1E;
+      --color-dark-surface: #262626;
+      --color-light: #F8F7F4;
+      --color-light-surface: #FFFFFF;
+      --color-muted: #8E9189;
+      --color-accent-soft: #CAD2C5;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      --transition-duration: 0.8s;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: var(--color-dark);
+      color: var(--color-light);
+      font-family: var(--font-family);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+    }
+
+    /* Presentation Container */
+    #presentation-app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Header & Navigation Bar (Always Visible) */
+    .top-nav-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 68px;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(30,30,30,0.85) 0%, rgba(30,30,30,0) 100%);
+      pointer-events: none;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      pointer-events: auto;
+    }
+
+    .nav-brand-badge {
+      width: 8px;
+      height: 24px;
+      background-color: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    .nav-brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+    }
+
+    .nav-brand-sub {
+      font-size: 12px;
+      color: var(--color-accent-soft);
+      font-weight: 400;
+      letter-spacing: 1px;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      padding-left: 14px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      pointer-events: auto;
+    }
+
+    .slide-counter-badge {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn:hover {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      transform: scale(1.06);
+    }
+
+    /* Bottom Status & Progress Bar */
+    .bottom-progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 100;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--color-primary);
+      width: 10%;
+      transition: width 0.4s var(--ease-out-expo);
+    }
+
+    .bottom-hint {
+      position: absolute;
+      bottom: 18px;
+      right: 48px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.4);
+      z-index: 100;
+      pointer-events: none;
+      display: flex;
+      gap: 16px;
+    }
+
+    /* Slide Deck Viewport */
+    .slides-deck {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+    }
+
+    /* Slide Base Definition */
+    [data-report-slide] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    [data-report-slide].active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    [data-report-slide] > [data-motion-surface] {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      transform-origin: center;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Layout Archetypes */
+    /* Archetype A: Fullscreen Hero */
+    .slide-layout-hero {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 8vw;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-backdrop-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      filter: brightness(0.82) contrast(1.05);
+    }
+
+    .hero-overlay-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 50%, rgba(30,30,30,0.4) 0%, rgba(20,20,20,0.85) 100%),
+                  linear-gradient(90deg, rgba(20,20,20,0.9) 0%, rgba(20,20,20,0.2) 60%);
+      z-index: 2;
+    }
+
+    .hero-content-box {
+      position: relative;
+      z-index: 3;
+      max-width: 720px;
+    }
+
+    .hero-tag-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      padding: 6px 16px;
+      background: rgba(140, 50, 50, 0.85);
+      border-radius: 4px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-tag-text {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+    }
+
+    .hero-main-title {
+      font-size: clamp(38px, 4.8vw, 64px);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(16px, 1.4vw, 20px);
+      line-height: 1.6;
+      color: var(--color-accent-soft);
+      margin-bottom: 32px;
+      font-weight: 300;
+      max-width: 600px;
+    }
+
+    .hero-spec-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 24px;
+    }
+
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .spec-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .spec-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    /* Archetype B: Master Visual + Side Panel */
+    .slide-layout-split {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      position: relative;
+      background-color: var(--color-dark);
+    }
+
+    .split-side-panel {
+      padding: 90px 48px 48px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: #171717;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 5;
+    }
+
+    .chapter-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .chapter-eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: 50%;
+    }
+
+    .split-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.25;
+      margin-bottom: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .split-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #B5B8B0;
+      font-weight: 300;
+      margin-bottom: 28px;
+    }
+
+    .feature-highlights {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: #DFE2DC;
+      line-height: 1.5;
+    }
+
+    .feature-bullet {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border-radius: 50%;
+      background: rgba(140, 50, 50, 0.2);
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .split-meta-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .split-meta-tag {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .split-main-gallery {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #111111;
+      padding: 76px 48px 48px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-stage-single {
+      width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 124px);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0D0D0D;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+
+    .image-stage-single img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 4px;
+      transition: transform 0.6s var(--ease-out-expo);
+    }
+
+    /* Dual Grid Layout */
+    .image-stage-dual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 124px);
+      align-items: center;
+    }
+
+    .image-card-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      background: #0D0D0D;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .image-card-frame .img-box {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .image-card-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.5s var(--ease-out-expo);
+    }
+
+    .image-card-caption {
+      padding: 10px 16px;
+      background: rgba(20, 20, 20, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #CAD2C5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .caption-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: rgba(140, 50, 50, 0.25);
+      color: #EFA6A6;
+    }
+
+    /* Triple / Asymmetric Grid for Mixed Orientations */
+    .image-stage-asymmetric {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 24px;
+      width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 124px);
+    }
+
+    .asym-portrait-col {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .asym-landscape-col {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Quad Grid for Multi-Detail Presentation */
+    .image-stage-quad {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 18px;
+      width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 124px);
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(10, 10, 10, 0.94);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      backdrop-filter: blur(16px);
+      cursor: zoom-out;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-modal img {
+      max-width: 92vw;
+      max-height: 90vh;
+      object-fit: contain;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 28px;
+      right: 36px;
+      color: #FFFFFF;
+      font-size: 28px;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+    }
+
+    /* ---------------------------------------------------- */
+    /* MOTION CONTRACT IMPLEMENTATION (CANONICAL KEYFRAMES) */
+    /* ---------------------------------------------------- */
+    [data-report-slide] > [data-motion-surface] {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-origin: center;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="fade"] > [data-motion-surface] {
+      animation: reportTransitionFade .9s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="slide"] > [data-motion-surface] {
+      animation: reportTransitionDepthPush .92s cubic-bezier(.16, 1, .3, 1) both;
+      transform-origin: left center;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="reveal"] > [data-motion-surface] {
+      animation: reportTransitionReveal .72s cubic-bezier(.7, 0, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="zoom"] > [data-motion-surface] {
+      animation: reportTransitionOrbit .96s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="gallery"] > [data-motion-surface] {
+      animation: reportTransitionGallery .92s cubic-bezier(.16, 1, .3, 1) both;
+      transform-origin: center;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="gallery"] [data-motion-gallery-frame] {
+      animation: reportTransitionGalleryFrame .82s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.08s + var(--motion-order, 0) * .08s);
+      transform-origin: center;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="glitch"] > [data-motion-surface] {
+      animation: reportTransitionGlitch .58s steps(2, end) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="light"] > [data-motion-surface] {
+      animation: reportTransitionLight .78s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide][data-transition="light"] > [data-motion-surface]::after {
+      content: "";
+      position: absolute;
+      z-index: 20;
+      top: -20%;
+      left: -28%;
+      width: 18%;
+      height: 140%;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(255, 255, 255, .42);
+      box-shadow: 0 0 42px rgba(255, 255, 255, .26);
+      mix-blend-mode: screen;
+      transform: translateX(-180%) skewX(-15deg);
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="light"] > [data-motion-surface]::after {
+      animation: reportTransitionLightSweep .78s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="vertical"] > [data-motion-surface] {
+      animation: reportTransitionShutter .88s cubic-bezier(.7, 0, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="curtain"] > [data-motion-surface] {
+      animation: reportTransitionCurtain .82s cubic-bezier(.7, 0, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="flip"] > [data-motion-surface] {
+      animation: reportTransitionFlip .78s cubic-bezier(.16, 1, .3, 1) both;
+      transform-origin: left center;
+    }
+
+    [data-report-slide].is-motion-entering[data-transition="focus"] > [data-motion-surface] {
+      animation: reportTransitionFocus .9s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="sequence"] [data-motion-enter-target] {
+      animation: reportEnterSequence .55s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.12s + var(--motion-order, 0) * .07s);
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="rise"] [data-motion-enter-target] {
+      animation: reportEnterRise .6s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.1s + var(--motion-order, 0) * .055s);
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="image"] [data-motion-media] {
+      animation: reportEnterImage .72s .12s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="depth"] [data-motion-enter-target] {
+      animation: reportEnterDepth .68s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.1s + var(--motion-order, 0) * .06s);
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="ink"] [data-motion-media] {
+      animation: reportEnterInk .72s .08s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="type"] [data-motion-enter-target] {
+      animation: reportEnterType .76s steps(10, end) both;
+      animation-delay: calc(.08s + var(--motion-order, 0) * .05s);
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="minimal"] [data-motion-line] {
+      animation: reportEnterMinimal .66s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.06s + var(--motion-order, 0) * .055s);
+      transform-origin: left center;
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="draw"] [data-motion-line] {
+      animation: reportEnterDraw .72s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.06s + var(--motion-order, 0) * .055s);
+    }
+
+    [data-report-slide].is-motion-entering[data-enter="cascade"] [data-motion-enter-target] {
+      animation: reportEnterCascade .68s cubic-bezier(.16, 1, .3, 1) both;
+      animation-delay: calc(.08s + var(--motion-order, 0) * .07s);
+    }
+
+    @keyframes reportTransitionFade {
+      from { opacity: 0; filter: blur(16px) brightness(2.25) contrast(.55); transform: scale(1.045); }
+      62% { opacity: 1; filter: blur(2px) brightness(1.2); }
+      to { opacity: 1; filter: none; transform: none; }
+    }
+
+    @keyframes reportTransitionDepthPush {
+      from { opacity: .18; transform: perspective(1200px) translate3d(22%, 0, -190px) rotateY(-15deg); filter: blur(5px) brightness(.55); }
+      to { opacity: 1; transform: perspective(1200px) translate3d(0, 0, 0) rotateY(0); filter: none; }
+    }
+
+    @keyframes reportTransitionReveal {
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0); }
+    }
+
+    @keyframes reportTransitionOrbit {
+      from { opacity: .3; transform: perspective(1200px) translate3d(-10%, 7%, -180px) rotateX(11deg) rotateY(22deg) scale(.86); filter: blur(4px); }
+      to { opacity: 1; transform: perspective(1200px) translate3d(0, 0, 0) rotateX(0) rotateY(0) scale(1); filter: none; }
+    }
+
+    @keyframes reportTransitionGallery {
+      0% { opacity: .18; clip-path: inset(6% 0 6% 34%); transform: perspective(1200px) translate3d(48%, 0, -70px) rotateY(-7deg); filter: saturate(.68) brightness(.72); }
+      68% { opacity: 1; clip-path: inset(2% 0 2% 0); transform: perspective(1200px) translate3d(-2.5%, 0, 0) rotateY(1deg); filter: none; }
+      100% { opacity: 1; clip-path: inset(0); transform: none; filter: none; }
+    }
+
+    @keyframes reportTransitionGalleryFrame {
+      from { opacity: 0; transform: perspective(900px) translate3d(42px, 0, -45px) rotateY(-9deg) scale(.9); filter: brightness(.72); }
+      72% { opacity: 1; transform: perspective(900px) translate3d(-3px, 0, 0) rotateY(1deg) scale(1.015); filter: none; }
+      to { opacity: 1; transform: none; filter: none; }
+    }
+
+    @keyframes reportTransitionGlitch {
+      0% { opacity: .28; clip-path: inset(0 0 72% 0); transform: translate3d(-3%, 0, 0) scale(1.025); filter: saturate(.45) contrast(1.3); }
+      32% { opacity: .88; clip-path: inset(28% 0 32% 0); transform: translate3d(2.5%, 0, 0) scale(1.015); }
+      66% { opacity: 1; clip-path: inset(62% 0 5% 0); transform: translate3d(-1%, 0, 0); }
+      100% { opacity: 1; clip-path: inset(0); transform: none; filter: none; }
+    }
+
+    @keyframes reportTransitionLight {
+      from { opacity: .62; filter: brightness(.65) contrast(1.12); }
+      to { opacity: 1; filter: none; }
+    }
+
+    @keyframes reportTransitionLightSweep {
+      0% { opacity: 0; transform: translateX(-180%) skewX(-15deg); }
+      30% { opacity: .8; }
+      100% { opacity: 0; transform: translateX(760%) skewX(-15deg); }
+    }
+
+    @keyframes reportTransitionShutter {
+      from { opacity: .35; clip-path: polygon(0 0,100% 0,100% 8%,0 23%,0 35%,100% 20%,100% 33%,0 48%,0 60%,100% 45%,100% 58%,0 73%,0 85%,100% 70%,100% 82%,0 100%); transform: scale(1.06) skewY(-1deg); }
+      to { opacity: 1; clip-path: polygon(0 0,100% 0,100% 14%,100% 14%,100% 28%,100% 28%,100% 42%,100% 42%,100% 56%,100% 56%,100% 70%,100% 70%,100% 84%,100% 84%,100% 100%,0 100%); transform: none; }
+    }
+
+    @keyframes reportTransitionCurtain {
+      from { clip-path: inset(0 50%); filter: brightness(.4); }
+      to { clip-path: inset(0); filter: none; }
+    }
+
+    @keyframes reportTransitionFlip {
+      from { opacity: 0; transform: perspective(1000px) rotateY(-48deg); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes reportTransitionFocus {
+      from { opacity: .2; clip-path: circle(3% at 58% 44%); filter: blur(8px) brightness(1.8); transform: scale(1.12); }
+      58% { opacity: 1; clip-path: circle(38% at 53% 47%); }
+      to { opacity: 1; clip-path: circle(78% at 50% 50%); filter: none; transform: none; }
+    }
+
+    @keyframes reportEnterSequence {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes reportEnterRise {
+      from { opacity: 0; clip-path: inset(100% 0 0); transform: translateY(10px); }
+      to { opacity: 1; clip-path: inset(0); transform: none; }
+    }
+
+    @keyframes reportEnterImage {
+      from { transform: scale(1.24); filter: brightness(1.55); }
+      to { transform: none; filter: none; }
+    }
+
+    @keyframes reportEnterDepth {
+      from { opacity: 0; transform: perspective(600px) translateZ(-55px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes reportEnterInk {
+      from { clip-path: circle(0 at 50% 50%); }
+      to { clip-path: circle(140% at 50% 50%); }
+    }
+
+    @keyframes reportEnterType {
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0); }
+    }
+
+    @keyframes reportEnterMinimal {
+      from { opacity: 0; transform: scaleX(.08); }
+      to { opacity: 1; transform: scaleX(1); }
+    }
+
+    @keyframes reportEnterDraw {
+      from { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateX(-6px); }
+      to { opacity: 1; clip-path: inset(0); transform: none; }
+    }
+
+    @keyframes reportEnterCascade {
+      from { opacity: 0; transform: translate(18px, 14px) rotate(2deg); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-report-slide].is-motion-entering > [data-motion-surface],
+      [data-report-slide].is-motion-entering > [data-motion-surface]::after,
+      [data-report-slide].is-motion-entering [data-motion-enter-target],
+      [data-report-slide].is-motion-entering [data-motion-media],
+      [data-report-slide].is-motion-entering [data-motion-gallery-frame],
+      [data-report-slide].is-motion-entering [data-motion-line] {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="presentation-app">
+    <!-- Top Persistent Navigation Header -->
+    <header class="top-nav-bar">
+      <div class="nav-brand">
+        <div class="nav-brand-badge"></div>
+        <div class="nav-brand-title">10 Gilfillan St</div>
+        <div class="nav-brand-sub">INTERIOR DESIGN PRESENTATION</div>
+      </div>
+      <div class="nav-controls">
+        <span class="slide-counter-badge" id="slideCounter">01 / 09</span>
+        <button class="nav-btn" id="prevBtn" title="Previous Slide (← / ↑)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button class="nav-btn" id="nextBtn" title="Next Slide (→ / ↓ / Space)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <button class="nav-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom Progress Bar & Navigation Hints -->
+    <div class="bottom-progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="bottom-hint">
+      <span>USE ARROW KEYS OR WHEEL TO NAVIGATE</span>
+      <span>•</span>
+      <span>CLICK ANY IMAGE TO EXPAND</span>
+    </div>
+
+    <!-- Main Slides Deck -->
+    <main class="slides-deck" id="slidesDeck">
+
+      <!-- SLIDE 1: Cover / Hero (Required Motion Plan Index 1) -->
+      <section data-report-slide class="active" data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-hero">
+            <img class="hero-backdrop-img" src="06-Entire%20Living%20Space.jpg" alt="10 Gilfillan St Masterpiece View" data-motion-media>
+            <div class="hero-overlay-gradient"></div>
+            <div class="hero-content-box">
+              <div class="hero-tag-wrap" data-motion-enter-target style="--motion-order: 0;">
+                <span class="hero-tag-text">Interior Architecture & Spatial Design</span>
+              </div>
+              <h1 class="hero-main-title">10 Gilfillan St<br><span style="color: #CAD2C5; font-weight: 300;">INTERIOR DESIGN</span></h1>
+              <p class="hero-subtitle" data-motion-enter-target style="--motion-order: 1;">
+                A curated symphony of minimalist warmth, natural textures, and open-plan spatial harmony tailored for contemporary residential living.
+              </p>
+              <div class="hero-spec-grid" data-motion-enter-target style="--motion-order: 2;">
+                <div class="spec-item">
+                  <span class="spec-label">Project Domain</span>
+                  <span class="spec-value">High-End Residential</span>
+                </div>
+                <div class="spec-item">
+                  <span class="spec-label">Style Language</span>
+                  <span class="spec-value">Warm Minimalist / Panorama</span>
+                </div>
+                <div class="spec-item">
+                  <span class="spec-label">Palette & Finish</span>
+                  <span class="spec-value">Crimson & Earthy Tones</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Entry & Foyer -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 01</span>
+                <h2 class="split-title">Entry Foyer & Transition</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  The entrance sets a refined architectural tone through vertical flute paneling, bespoke joinery, and concealed lighting niches that frame the arrival experience.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Full-height timber veneer cladding integrating seamless storage.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Architectural accent bench with curated leather cushions and soft ambient washing.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>3</span>
+                    <span>Visual axis leading gracefully towards the illuminated central staircase.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Foyer / Drop-off</span>
+                <span class="split-meta-tag">Ref: 07, 07a, 08</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-asymmetric">
+                <div class="asym-portrait-col">
+                  <div class="image-card-frame" style="height: 100%;">
+                    <div class="img-box">
+                      <img src="07-Entry.jpg" alt="Entry Foyer Vertical Elevation" class="zoomable" data-motion-media>
+                    </div>
+                    <div class="image-card-caption">
+                      <span>Full-Height Entry Feature Niche</span>
+                      <span class="caption-badge">Vertical Axis</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="asym-landscape-col">
+                  <div class="image-card-frame" style="flex: 1;">
+                    <div class="img-box">
+                      <img src="07a-Entry.jpg" alt="Entry Joinery Detail" class="zoomable" data-motion-media>
+                    </div>
+                    <div class="image-card-caption">
+                      <span>Integrated Bench & Storage Detail</span>
+                      <span class="caption-badge">Joinery</span>
+                    </div>
+                  </div>
+                  <div class="image-card-frame" style="flex: 1;">
+                    <div class="img-box">
+                      <img src="08-Entry.jpg" alt="Foyer Transition Vista" class="zoomable" data-motion-media>
+                    </div>
+                    <div class="image-card-caption">
+                      <span>Arrival Vista Towards Interior</span>
+                      <span class="caption-badge">Vista</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Living & Social Domain -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 02</span>
+                <h2 class="split-title">Living & Social Domain</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  An expansive living lounge bathed in expansive natural daylight. Low-profile modular seating and a linear floating hearth create an anchored sense of calm.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Continuous floor-to-ceiling glazing opening seamlessly to garden vistas.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Horizontal stone plinth anchoring the media zone with recessed linear fire.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>3</span>
+                    <span>Curved bouclé sofa and textured wool rug for tactile warmth.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Main Living</span>
+                <span class="split-meta-tag">Ref: 04, 05, 06</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-dual">
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="04-Living.jpg" alt="Living Room Panoramic Lounge" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Lounge Area with Panoramic Glazing</span>
+                    <span class="caption-badge">Panoramic</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="05-Living.jpg" alt="Living Hearth and Media Joinery" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Architectural Hearth & Joinery</span>
+                    <span class="caption-badge">Hearth</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Kitchen & Culinary Island -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 03</span>
+                <h2 class="split-title">Culinary Heart & Island</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  Precision-crafted monolithic stone island balanced with dark timber cabinetry. A celebration of culinary functionality seamlessly merging into the entertaining area.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Statuary natural stone island with cantilevered breakfast seating bar.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Fully integrated Miele appliances concealed behind full-height fluted panels.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>3</span>
+                    <span>Recessed LED strip lighting illuminating the stone backsplash niche.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Chef Kitchen</span>
+                <span class="split-meta-tag">Ref: 01, 02</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-dual">
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="01-Kitchen.jpg" alt="Kitchen Island Perspective" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Monolithic Island & Breakfast Counter</span>
+                    <span class="caption-badge">Island View</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="02-Kitchen.jpg" alt="Kitchen Working Area & Storage" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Working Counter & Concealed Cabinetry</span>
+                    <span class="caption-badge">Prep Zone</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Dining & Entertaining -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 04</span>
+                <h2 class="split-title">Dining & Hospitality</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  Positioned at the pivotal junction of kitchen and exterior courtyard, the dining room invites intimate family meals as well as festive social gatherings.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Selected dining table accommodating 8 to 10 guests comfortably.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Sculptural minimalist pendant providing warm directional illumination.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>3</span>
+                    <span>Direct visual and physical dialogue with the landscaped outdoor terrace.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Dining Salon</span>
+                <span class="split-meta-tag">Ref: 03-Dining</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-single">
+                <img src="03-Dining.jpg" alt="Dining Room Grand View" class="zoomable" data-motion-media>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: Architectural Staircase -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 05</span>
+                <h2 class="split-title">Sculptural Staircase</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  A central sculptural element linking private and public realms. Cantilevered timber treads and subtle riser illumination turn circulation into art.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Floating solid oak treads engineered with concealed steel stringers.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Integrated continuous handrail detail with warm perimeter step lights.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Central Spine</span>
+                <span class="split-meta-tag">Ref: 09, 10-Stairs</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-dual">
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="09-Stiars.jpg" alt="Staircase Flight Perspective" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Lower Flight & Tread Illumination</span>
+                    <span class="caption-badge">Ascent View</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="10-Stiars.jpg" alt="Staircase Upper Gallery" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Upper Void & Geometric Rhythm</span>
+                    <span class="caption-badge">Upper Void</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: Family Lounge & Retreat -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 06</span>
+                <h2 class="split-title">Family Living Retreat</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  A secondary informal lounge located on the upper tier. Tailored for family media, quiet reading, and relaxed casual interaction.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Deep plush sectional sofa in warm sand tone bouclé textile.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Acoustically dampened wall treatments ensuring private acoustic zoning.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Upper Family Room</span>
+                <span class="split-meta-tag">Ref: 13-Family</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-single">
+                <img src="13-Family.jpg" alt="Upper Family Lounge" class="zoomable" data-motion-media>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: Master Bedroom Sanctuary -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 07</span>
+                <h2 class="split-title">Master Suite Sanctuary</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  A serene boutique hotel standard sanctuary. The master suite balances velvet upholstered headboard panels with open-plan connectivity to the private ensuite.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Architectural headboard wall integrating floating bedside tables and reading sconces.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Direct panoramic spatial dialogue linking sleeping quarter and master bath.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>3</span>
+                    <span>Sheer motorized drapery filtering soft daylight across natural timber flooring.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Master Suite</span>
+                <span class="split-meta-tag">Ref: 14, 17</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-dual">
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="14-MasterBedroom.jpg" alt="Master Bedroom Sanctuary" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Master Bedroom Suite</span>
+                    <span class="caption-badge">Suite View</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="17-Master%2BEnsuite.jpg" alt="Master Bedroom and Ensuite Transition" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Ensuite Panorama Transition</span>
+                    <span class="caption-badge">Open Suite</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Master Ensuite & Laundry -->
+      <section data-report-slide data-motion-index="1" data-chapter-id="室内-1789347593197-6" data-transition="focus" data-enter="depth">
+        <div data-motion-surface>
+          <div class="slide-layout-split">
+            <aside class="split-side-panel">
+              <div>
+                <span class="chapter-eyebrow">Spatial Sequence · 08</span>
+                <h2 class="split-title">Ensuite & Laundry</h2>
+                <p class="split-desc" data-motion-enter-target style="--motion-order: 0;">
+                  Monolithic large-format porcelain slabs, brushed gunmetal fixtures, and bespoke fluted vanity details offer spa-like refinement and uncompromising utility.
+                </p>
+                <ul class=eature-highlights\ data-motion-enter-target style=\--motion-order: 1;\>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>1</span>
+                    <span>Freestanding sculptural bath framed against floor-to-ceiling stone wall.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>2</span>
+                    <span>Dual basin vanity with arched LED backlit mirrors.</span>
+                  </li>
+                  <li class="feature-item">
+                    <span class=eature-bullet\>3</span>
+                    <span>Dedicated laundry utility room with ergonomic stacked appliances and storage.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="split-meta-footer">
+                <span class="split-meta-tag">Zones: Wet Areas</span>
+                <span class="split-meta-tag">Ref: 15, 16, 11, 12</span>
+              </div>
+            </aside>
+            <section class="split-main-gallery">
+              <div class="image-stage-quad">
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="15-Ensuite.jpg" alt="Master Ensuite Vanity" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Dual Basin Vanity Suite</span>
+                    <span class="caption-badge">Ensuite</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="16-Ensuite.jpg" alt="Master Ensuite Bath Area" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Freestanding Bath & Shower Niche</span>
+                    <span class="caption-badge">Spa Zone</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="11-Laundry.jpg" alt="Laundry Room Elevation" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Laundry Utility Station</span>
+                    <span class="caption-badge">Utility</span>
+                  </div>
+                </div>
+                <div class="image-card-frame">
+                  <div class="img-box">
+                    <img src="12-Laundry.jpg" alt="Laundry Storage Detail" class="zoomable" data-motion-media>
+                  </div>
+                  <div class="image-card-caption">
+                    <span>Cabinetry & Linen Storage</span>
+                    <span class="caption-badge">Storage</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: Summary & Material Palette -->
+      </main>
+  </div>
+
+  <!-- Lightbox Modal Component -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="Expanded View">
+  </div>
+
+  <!-- Presentation & Motion Script -->
+  <script>
+    /**
+     * Canonical Motion Replay Engine for design-presentation-web
+     */
+    const ReportMotion = {
+      replay(slideElement) {
+        if (!slideElement) return;
+        slideElement.classList.remove('is-motion-entering');
+        void slideElement.offsetWidth; // Force Reflow
+        slideElement.classList.add('is-motion-entering');
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = Array.from(document.querySelectorAll('[data-report-slide]'));
+      const totalSlides = slides.length;
+      let currentIndex = 0;
+      let isAnimating = false;
+
+      const slideCounter = document.getElementById('slideCounter');
+      const progressFill = document.getElementById('progressFill');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+      function updateSlide(newIndex) {
+        if (newIndex < 0 || newIndex >= totalSlides || isAnimating) return;
+        isAnimating = true;
+
+        const currentSlide = slides[currentIndex];
+        const nextSlide = slides[newIndex];
+
+        currentSlide.classList.remove('active', 'is-motion-entering');
+        currentIndex = newIndex;
+
+        nextSlide.classList.add('active');
+        ReportMotion.replay(nextSlide);
+
+        // Update Counter & Progress
+        slideCounter.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+        progressFill.style.width = `${((currentIndex + 1) / totalSlides) * 100}%`;
+
+        setTimeout(() => {
+          isAnimating = false;
+        }, 600);
+      }
+
+      // Init First Slide
+      ReportMotion.replay(slides[0]);
+
+      // Navigation Buttons
+      prevBtn.addEventListener('click', () => updateSlide(currentIndex - 1));
+      nextBtn.addEventListener('click', () => updateSlide(currentIndex + 1));
+
+      // Keyboard Controls
+      window.addEventListener('keydown', (e) => {
+        if (['ArrowRight', 'ArrowDown', 'Space', 'PageDown'].includes(e.code) || e.key === ' ' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          updateSlide(currentIndex + 1);
+        } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.code) || e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          updateSlide(currentIndex - 1);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          updateSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          updateSlide(totalSlides - 1);
+        }
+      });
+
+      // Wheel Navigation with Threshold (once per gesture)
+      let wheelTimeout = null;
+      window.addEventListener('wheel', (e) => {
+        if (wheelTimeout) return;
+        if (Math.abs(e.deltaY) > 25) {
+          if (e.deltaY > 0) {
+            updateSlide(currentIndex + 1);
+          } else {
+            updateSlide(currentIndex - 1);
+          }
+          wheelTimeout = setTimeout(() => {
+            wheelTimeout = null;
+          }, 800);
+        }
+      }, { passive: true });
+
+      // Fullscreen Toggle
+      fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => console.log(err));
+        } else {
+          document.exitFullscreen().catch(err => console.log(err));
+        }
+      });
+
+      // Lightbox Modal Handling
+      const lightboxModal = document.getElementById('lightboxModal');
+      const lightboxImg = document.getElementById('lightboxImg');
+      const lightboxClose = document.getElementById('lightboxClose');
+
+      document.querySelectorAll('img.zoomable').forEach(img => {
+        img.addEventListener('click', (e) => {
+          e.stopPropagation();
+          lightboxImg.src = img.src;
+          lightboxModal.classList.add('active');
+        });
+      });
+
+      lightboxClose.addEventListener('click', () => {
+        lightboxModal.classList.remove('active');
+      });
+
+      lightboxModal.addEventListener('click', () => {
+        lightboxModal.classList.remove('active');
+      });
+    });
+  </script>
+</body>
+</html>
